@@ -1,4 +1,8 @@
-
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using StackExchange.Redis;
+using Clients;
 namespace AuthService;
 
 public class Program
@@ -7,42 +11,79 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        // Add services to the container.
+        // --- 1. Registrar Servicios ---
+
+        builder.Services.AddControllers();
+        builder.Services.AddEndpointsApiExplorer();
+        builder.Services.AddSwaggerGen();
+
+        // A. Registrar el Cliente gRPC para hablar con ClientsService
+        builder.Services.AddGrpcClient<Clients.ClientsClient>(o =>
+        {
+            // Lee la URL del appsettings.json
+            var serviceUrl = builder.Configuration["ServiceUrls:ClientsService"];
+            o.Address = new Uri(serviceUrl!);
+        })
+        // A.1 (IMPORTANTE) Para confiar en el certificado de desarrollo de tu ClientsService
+        .ConfigurePrimaryHttpMessageHandler(() =>
+        {
+            var handler = new HttpClientHandler();
+            // Esto permite la conexión a tu ClientsService local (que usa un certificado no confiable)
+            handler.ServerCertificateCustomValidationCallback = 
+                HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+            return handler;
+        });
+
+        // B. Registrar Redis para la Blocklist (cumple requisito de la rúbrica)
+        builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
+        {
+            var connectionString = builder.Configuration["Redis:ConnectionString"];
+            return ConnectionMultiplexer.Connect(connectionString!);
+        });
+
+        // C. Registrar y Configurar la Autenticación JWT (cumple requisito de la rúbrica)
+        builder.Services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        })
+        .AddJwtBearer(options =>
+        {
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                ValidAudience = builder.Configuration["Jwt:Audience"],
+                IssuerSigningKey = new SymmetricSecurityKey(
+                    Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
+            };
+        });
+
+        // D. Registrar el servicio de Autorización (para el requisito de Roles)
         builder.Services.AddAuthorization();
 
-        // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-        builder.Services.AddOpenApi();
 
         var app = builder.Build();
 
-        // Configure the HTTP request pipeline.
+        // --- 2. Configurar el Pipeline de HTTP ---
+
         if (app.Environment.IsDevelopment())
         {
-            app.MapOpenApi();
+            app.UseSwagger();
+            app.UseSwaggerUI();
         }
 
         app.UseHttpsRedirection();
 
+        // ¡IMPORTANTE! Activar Autenticación y Autorización
+        // Esto debe ir ANTES de app.MapControllers()
+        app.UseAuthentication();
         app.UseAuthorization();
 
-        var summaries = new[]
-        {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
-
-        app.MapGet("/weatherforecast", (HttpContext httpContext) =>
-        {
-            var forecast =  Enumerable.Range(1, 5).Select(index =>
-                new WeatherForecast
-                {
-                    Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                    TemperatureC = Random.Shared.Next(-20, 55),
-                    Summary = summaries[Random.Shared.Next(summaries.Length)]
-                })
-                .ToArray();
-            return forecast;
-        })
-        .WithName("GetWeatherForecast");
+        app.MapControllers();
 
         app.Run();
     }

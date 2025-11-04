@@ -1,0 +1,81 @@
+syntax = "proto3";
+
+package clients;
+
+service Clients {
+  rpc CreateClient (CreateClientRequest) returns (ClientResponse);
+  rpc GetClientById (GetClientByIdRequest) returns (ClientResponse);
+  rpc GetAllClients (GetAllClientsRequest) returns (GetAllClientsResponse);
+  rpc UpdateClient (UpdateClientRequest) returns (ClientResponse);
+  rpc DeleteClient (DeleteClientRequest) returns (DeleteClientResponse); // Soft Delete
+  rpc GetClientForAuth (GetClientForAuthRequest) returns (ClientAuthResponse);
+}
+
+message CreateClientRequest {
+  string first_name = 1;
+  string last_name = 2;
+  string email = 3;
+  string username = 4;
+  string birth_date = 5; 
+  string address = 6;
+  string phone_number = 7;
+  string password = 8;
+}
+
+message UpdateClientRequest {
+  string id = 1;
+  string first_name = 2;
+  string last_name = 3;
+  string email = 4;
+  string username = 5;
+  string birth_date = 6;
+  string address = 7;
+  string phone_number = 8;
+  optional string password = 9;
+}
+
+message ClientResponse {
+  string id = 1;
+  string full_name = 2;
+  string email = 3;
+  string username = 4;
+  string status = 5; 
+  string birth_date = 6;
+  string address = 7;
+  string phone_number = 8;
+  string registration_date = 9;
+}
+
+message GetClientByIdRequest {
+  string id = 1;
+}
+
+message GetAllClientsRequest {
+  optional string filter_name = 1;
+  optional string filter_email = 2;
+  optional string filter_status = 3;
+  optional string filter_username = 4;
+}
+
+message GetAllClientsResponse {
+  repeated ClientResponse clients = 1;
+}
+
+message DeleteClientRequest {
+  string id = 1;
+}
+
+message DeleteClientResponse {
+  string status_message = 1;
+}
+
+message GetClientForAuthRequest {
+  string email_or_username = 1;
+}
+
+message ClientAuthResponse {
+  string id = 1;
+  string password_hash = 2;
+  string status = 3;
+  string role = 4;
+}

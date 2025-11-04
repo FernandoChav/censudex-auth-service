@@ -24,9 +24,9 @@ namespace AuthService.Services.Implementation
             // Crear los "Claims" (Datos dentro del token)
             var claims = new[]
             {
-            new Claim(JwtRegisteredClaimNames.Sub, userId), // El ID del usuario
-            new Claim(ClaimTypes.Role, userRole), // El Rol (para Autorización)
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()) // El ID ÚNICO del token
+                new Claim(JwtRegisteredClaimNames.Sub, userId),
+                new Claim(ClaimTypes.Role, userRole),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
 
             // Crear el Token

@@ -2,7 +2,10 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using StackExchange.Redis;
-using Clients;
+using Microsoft.Extensions.DependencyInjection;
+
+using AuthService.Services.Interfaces;
+using AuthService.Services.Implementation;
 namespace AuthService;
 
 public class Program
@@ -15,10 +18,10 @@ public class Program
 
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
+        builder.Services.AddScoped<ITokenService, TokenService>();
 
         // A. Registrar el Cliente gRPC para hablar con ClientsService
-        builder.Services.AddGrpcClient<Clients.ClientsClient>(o =>
+        builder.Services.AddGrpcClient<Clients.Clients.ClientsClient>(o =>
         {
             // Lee la URL del appsettings.json
             var serviceUrl = builder.Configuration["ServiceUrls:ClientsService"];
@@ -67,14 +70,6 @@ public class Program
 
 
         var app = builder.Build();
-
-        // --- 2. Configurar el Pipeline de HTTP ---
-
-        if (app.Environment.IsDevelopment())
-        {
-            app.UseSwagger();
-            app.UseSwaggerUI();
-        }
 
         app.UseHttpsRedirection();
 

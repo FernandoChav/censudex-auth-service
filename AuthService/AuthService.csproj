@@ -10,7 +10,8 @@
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
     <PackageReference Include="Google.Protobuf" Version="3.33.0" />
     <PackageReference Include="Grpc.Net.Client" Version="2.71.0" />
-    <PackageReference Include="Grpc.Tools" Version="2.76.0">
+    <PackageReference Include="Grpc.Net.ClientFactory" Version="2.71.0" />
+    <PackageReference Include="Grpc.Tools" Version="2.71.0">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
@@ -19,8 +20,6 @@
     <PackageReference Include="StackExchange.Redis" Version="2.9.32" />
   </ItemGroup>
   <ItemGroup>
-    <Protobuf Include="Protos\clients.proto" GrpcServices="Client">
-      <Link>Protos\clients.proto</Link>
-    </Protobuf>
+    <Protobuf Include="Protos\clients.proto" GrpcServices="Client" />
   </ItemGroup>
 </Project>

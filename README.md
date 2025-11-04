@@ -58,7 +58,7 @@ Fíjate en la URL que te da (ej. http://localhost:5186).
 
     ```JSON
     "Jwt": {
-        "Key":      "ESTE_ES_UN_SECRETO_MUY_LARGO_Y_SEGURO_QUE_DEBES_CAMBIAR
+        "Key":      "ESTE_ES_UN_SECRETO_MUY_LARGO_Y_SEGURO_QUE_DEBES_CAMBIAR"
     }
     ```
 ## ⚙️ Paso 3: ¡Inicia el AuthService!

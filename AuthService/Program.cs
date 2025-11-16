@@ -71,7 +71,6 @@ public class Program
 
         var app = builder.Build();
 
-        app.UseHttpsRedirection();
 
         // ¡IMPORTANTE! Activar Autenticación y Autorización
         // Esto debe ir ANTES de app.MapControllers()

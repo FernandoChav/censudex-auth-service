@@ -3,7 +3,6 @@ FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
 
 # Copia el .csproj y restaura los paquetes
-# (Asume que el .proto está en Protos/clients.proto)
 COPY *.csproj .
 RUN dotnet restore
 
@@ -16,9 +15,8 @@ FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS final
 WORKDIR /app
 COPY --from=build /app/publish .
 
-# IMPORTANTE: Dentro de Docker, usaremos HTTP. NGINX manejará HTTPS.
-# El puerto 8080 es estándar para servicios .NET en contenedores.
+# Exponemos el mismo puerto estándar 8080 (HTTP)
 ENV ASPNETCORE_URLS=http://+:8080
 EXPOSE 8080
 
-ENTRYPOINT ["dotnet", "ClientsService.dll"]
+ENTRYPOINT ["dotnet", "AuthService.dll"]

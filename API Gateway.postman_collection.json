@@ -1,0 +1,343 @@
+{
+	"info": {
+		"_postman_id": "67aa78c8-4150-479f-bae5-8e8334743213",
+		"name": "API Gateway",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "34959422",
+		"_collection_link": "https://a99999-0732.postman.co/workspace/Taller-2-arqui~b694934c-92f8-4b6e-9d31-8dcb87c3a330/collection/34959422-67aa78c8-4150-479f-bae5-8e8334743213?action=share&source=collection_link&creator=34959422"
+	},
+	"item": [
+		{
+			"name": "User (client service)",
+			"item": [
+				{
+					"name": "get all",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{Token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL_GATEWAY}}/api/clients?filter_status=inactive",
+							"host": [
+								"{{URL_GATEWAY}}"
+							],
+							"path": [
+								"api",
+								"clients"
+							],
+							"query": [
+								{
+									"key": "filter_status",
+									"value": "inactive"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get usuario by id",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{Token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL_GATEWAY}}/api/clients/7cc65c0b-5016-4f8d-a30c-b37cc7c22d9c",
+							"host": [
+								"{{URL_GATEWAY}}"
+							],
+							"path": [
+								"api",
+								"clients",
+								"7cc65c0b-5016-4f8d-a30c-b37cc7c22d9c"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create user",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"firstName\": \"Prueba2\",\r\n  \"lastName\": \"Prueba\",\r\n  \"email\": \"fpatric21@censudex.cl\",\r\n  \"username\": \"FerUserprueba\",\r\n  \"birthDate\": \"2001-01-01\",\r\n  \"phoneNumber\": \"+56999998888\",\r\n  \"password\": \"GatewayPass123!\",\r\n  \"address\": \"Calledesconocida\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL_GATEWAY}}/api/clients/create",
+							"host": [
+								"{{URL_GATEWAY}}"
+							],
+							"path": [
+								"api",
+								"clients",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update User",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{Token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"firstName\": \"Ignacio Editado\",\r\n  \"address\": \"Nueva Casa 123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost/api/clients/533e3bca-6c66-4fe9-8133-3dd111fffacb",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"api",
+								"clients",
+								"533e3bca-6c66-4fe9-8133-3dd111fffacb"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Desactivar User",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{Token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost/api/clients/7cc65c0b-5016-4f8d-a30c-b37cc7c22d9c",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"api",
+								"clients",
+								"7cc65c0b-5016-4f8d-a30c-b37cc7c22d9c"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const jsonData = pm.response.json();\r",
+									"const token = jsonData.token;\r",
+									"\r",
+									"pm.environment.set(\"Token\", token);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"emailOrUsername\": \"gateway@censudex.cl\",\r\n  \"password\": \"GatewayPass123!\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL_GATEWAY}}/api/auth/login",
+							"host": [
+								"{{URL_GATEWAY}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "admin login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const jsonData = pm.response.json();\r",
+									"const token = jsonData.token;\r",
+									"\r",
+									"pm.environment.set(\"Token\", token);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"emailOrUsername\": \"admin\",\r\n  \"password\": \"Admin123!\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL_GATEWAY}}/api/auth/login",
+							"host": [
+								"{{URL_GATEWAY}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "validate token",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{Token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost/api/auth/validate-token",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"api",
+								"auth",
+								"validate-token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{Token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{URL_GATEWAY}}/api/auth/logout",
+							"host": [
+								"{{URL_GATEWAY}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
